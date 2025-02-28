@@ -115,7 +115,7 @@ class OnlineEvaluator:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Captcha Evaluator Online")
     parser.add_argument(
-        "--max-requests", type=int, default=500, help="Maximum number of requests"
+        "--max-requests", type=int, default=100, help="Maximum number of requests"
     )
     args = parser.parse_args()
 
