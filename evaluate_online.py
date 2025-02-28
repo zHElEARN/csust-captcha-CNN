@@ -1,9 +1,10 @@
 import torch
-from PIL import Image
 import io
 import time
+import argparse
 from collections import deque
 from torchvision import transforms
+from PIL import Image
 
 from train import CaptchaModel, Config
 from captcha_handler import CaptchaHandler
@@ -116,5 +117,11 @@ class OnlineEvaluator:
 
 
 if __name__ == "__main__":
-    evaluator = OnlineEvaluator(max_requests=500)
+    parser = argparse.ArgumentParser(description="Online Captcha Evaluator")
+    parser.add_argument(
+        "--max_requests", type=int, default=500, help="Maximum number of requests"
+    )
+    args = parser.parse_args()
+
+    evaluator = OnlineEvaluator(max_requests=args.max_requests)
     evaluator.run_continuous_evaluation()

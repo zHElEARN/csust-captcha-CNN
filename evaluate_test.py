@@ -8,14 +8,13 @@ from PIL import Image
 from train import CaptchaModel
 
 
-# 复用训练代码中的配置和模型定义
 class Config:
     test_captchas_path = "datasets/test_captchas"
     test_labels_path = "datasets/test_labels.json"
     final_model_path = "final_model.pth"
     num_classes = 36
     max_length = 4
-    batch_size = 32  # 可以根据GPU显存调整
+    batch_size = 32
 
 
 class CaptchaDataset(Dataset):
@@ -43,7 +42,6 @@ class CaptchaDataset(Dataset):
         return image, torch.LongTensor(target), img_name  # 增加返回文件名
 
 
-# 复用训练代码中的字符映射
 char2idx = {
     char: idx for idx, char in enumerate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 }
@@ -70,7 +68,7 @@ def decode_predictions(outputs):
 
 def evaluate_model():
     # 设备设置
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # 加载模型
     model = CaptchaModel().to(device)

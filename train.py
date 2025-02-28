@@ -205,7 +205,7 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs, phase="pre
 
 
 # 设备设置
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def main():

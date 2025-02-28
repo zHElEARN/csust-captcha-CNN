@@ -1,15 +1,14 @@
 import argparse
 import time
-from pathlib import Path
-from collections import deque
 import tempfile
 import torch
+from pathlib import Path
 from captcha_handler import CaptchaHandler
 from vlm_captcha_processor import VLMCaptchaProcessor
 
 
 class VLMEvaluator:
-    def __init__(self, model_path: str, max_requests=100, window_size=10):
+    def __init__(self, model_path: str, max_requests=100):
         self.handler = CaptchaHandler()
         self.model = VLMCaptchaProcessor(model_path)
         self.max_requests = max_requests
@@ -17,7 +16,6 @@ class VLMEvaluator:
         # 统计相关
         self.total = 0
         self.correct = 0
-        self.recent_results = deque(maxlen=window_size)
         self.start_time = None
 
         # 设备信息
@@ -53,7 +51,6 @@ class VLMEvaluator:
             # 更新统计
             self.total += 1
             self.correct += int(is_correct)
-            self.recent_results.append(is_correct)
 
             return is_correct, prediction
 
@@ -73,15 +70,9 @@ class VLMEvaluator:
 
                 if success is not None:
                     status = "✓" if success else "✗"
-                    recent_acc = (
-                        sum(self.recent_results) / len(self.recent_results)
-                        if self.recent_results
-                        else 0
-                    )
                     print(
                         f"[{self.total}/{self.max_requests}] {status} | "
-                        f"预测: {prediction.ljust(8)} | "
-                        f"实时准确率: {recent_acc:.1%}"
+                        f"预测结果: {prediction}"
                     )
 
         except KeyboardInterrupt:
