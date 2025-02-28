@@ -94,9 +94,11 @@ class VLMEvaluator:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="验证码评估工具")
-    parser.add_argument("--model-path", required=True, type=str, help="模型路径")
-    parser.add_argument("--max-requests", type=int, default=100, help="最大请求次数")
+    parser = argparse.ArgumentParser(description="Captcha Evaluator VLM")
+    parser.add_argument("--model-path", required=True, type=str, help="Model path")
+    parser.add_argument(
+        "--max-requests", type=int, default=100, help="Maximum number of requests"
+    )
     args = parser.parse_args()
 
     evaluator = VLMEvaluator(model_path=args.model_path, max_requests=args.max_requests)

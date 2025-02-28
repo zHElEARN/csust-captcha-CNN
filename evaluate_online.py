@@ -6,13 +6,9 @@ from collections import deque
 from torchvision import transforms
 from PIL import Image
 
-from train import CaptchaModel, Config
 from captcha_handler import CaptchaHandler
-
-char2idx = {
-    char: idx for idx, char in enumerate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-}
-idx2char = {idx: char for char, idx in char2idx.items()}
+from model import CaptchaModel
+from model_config import Config, idx2char
 
 
 class OnlineEvaluator:
@@ -117,9 +113,9 @@ class OnlineEvaluator:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Online Captcha Evaluator")
+    parser = argparse.ArgumentParser(description="Captcha Evaluator Online")
     parser.add_argument(
-        "--max_requests", type=int, default=500, help="Maximum number of requests"
+        "--max-requests", type=int, default=500, help="Maximum number of requests"
     )
     args = parser.parse_args()
 
