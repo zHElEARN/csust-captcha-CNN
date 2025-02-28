@@ -249,15 +249,19 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=Config.lr)
 
     # 第一阶段预训练
-    model, train_loss_history, val_loss_history, train_acc_history, val_acc_history = (
-        train_model(
-            model,
-            pretrain_dataloaders,
-            criterion,
-            optimizer,
-            Config.num_epochs_pretrain,
-            "pretrain",
-        )
+    (
+        model,
+        pretrain_train_loss_history,
+        pretrain_val_loss_history,
+        pretrain_train_acc_history,
+        pretrain_val_acc_history,
+    ) = train_model(
+        model,
+        pretrain_dataloaders,
+        criterion,
+        optimizer,
+        Config.num_epochs_pretrain,
+        "pretrain",
     )
 
     # 保存预训练模型
@@ -274,42 +278,70 @@ def main():
         if isinstance(classifier[-1], nn.Linear):
             nn.init.xavier_normal_(classifier[-1].weight)
 
-    model, train_loss_history, val_loss_history, train_acc_history, val_acc_history = (
-        train_model(
-            model,
-            dataloaders,
-            criterion,
-            optimizer,
-            Config.num_epochs_finetune,
-            "finetune",
-        )
+    (
+        model,
+        finetune_train_loss_history,
+        finetune_val_loss_history,
+        finetune_train_acc_history,
+        finetune_val_acc_history,
+    ) = train_model(
+        model,
+        dataloaders,
+        criterion,
+        optimizer,
+        Config.num_epochs_finetune,
+        "finetune",
     )
 
     print(f"Training complete. Best model saved to {Config.final_model_path}")
 
     # 绘制并保存训练和验证的损失和准确率图像
-    epochs = range(1, len(train_loss_history) + 1)
-    plt.figure(figsize=(12, 4))
+    epochs_pretrain = range(1, len(pretrain_train_loss_history) + 1)
+    epochs_finetune = range(1, len(finetune_train_loss_history) + 1)
+    plt.figure(figsize=(12, 8))
 
-    plt.subplot(1, 2, 1)
-    plt.plot(epochs, train_loss_history, "b", label="Training loss")
-    plt.plot(epochs, val_loss_history, "r", label="Validation loss")
-    plt.title("Training and Validation Loss")
+    plt.subplot(2, 2, 1)
+    plt.plot(epochs_pretrain, pretrain_train_loss_history, "b", label="Training loss")
+    plt.plot(epochs_pretrain, pretrain_val_loss_history, "r", label="Validation loss")
+    plt.title("Pretraining Loss")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(epochs, train_acc_history, "b", label="Training Accuracy")
-    plt.plot(epochs, val_acc_history, "r", label="Validation Accuracy")
-    plt.title("Training and Validation Accuracy")
+    plt.subplot(2, 2, 2)
+    plt.plot(
+        epochs_pretrain, pretrain_train_acc_history, "b", label="Training Accuracy"
+    )
+    plt.plot(
+        epochs_pretrain, pretrain_val_acc_history, "r", label="Validation Accuracy"
+    )
+    plt.title("Pretraining Accuracy")
+    plt.xlabel("Epochs")
+    plt.ylabel("Accuracy")
+    plt.legend()
+
+    plt.subplot(2, 2, 3)
+    plt.plot(epochs_finetune, finetune_train_loss_history, "b", label="Training loss")
+    plt.plot(epochs_finetune, finetune_val_loss_history, "r", label="Validation loss")
+    plt.title("Fine-tuning Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.legend()
+
+    plt.subplot(2, 2, 4)
+    plt.plot(
+        epochs_finetune, finetune_train_acc_history, "b", label="Training Accuracy"
+    )
+    plt.plot(
+        epochs_finetune, finetune_val_acc_history, "r", label="Validation Accuracy"
+    )
+    plt.title("Fine-tuning Accuracy")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
     plt.legend()
 
     plt.tight_layout()
     plt.savefig("training_history.png")
-    plt.show()
 
 
 if __name__ == "__main__":
