@@ -176,4 +176,3 @@ cython_debug/
 datasets/
 outputs/
 *.pth
-*.png
